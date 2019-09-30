@@ -5,6 +5,7 @@
 ### node_exporter
 
 `ansible-playbook ./roles/node_exporter.yml`
+
 说明：一键部署node_exporter并添加到systemd启动
 
 * 默认安装路径`/usr/local/prometheus`
@@ -13,12 +14,15 @@
 * 手动启动、重启`systemctl start/restart node_exporter`
 
 > 文件依赖：
+
 `./prometheus/node_exporter{version}.tar.gz` 
+
 `./prometheus/node_exporter.service`
 
 ### storcli.py
 
 `ansible-playbook ./roles/storcli.yml`
+
 说明：部署storcli和探针脚本并添加到crontab启动
 
 * storcli安装路径`/opt/MegaRAID/storcli/storcli64`
@@ -27,5 +31,7 @@
 * 指针文件`/usr/local/prometheus/textfile_collector/storcli.prom`
 
 > 文件依赖：
+
 `./prometheus/storcli.py`
+
 `./prometheus/storcli-1.14.12-1.noarch.rpm`
