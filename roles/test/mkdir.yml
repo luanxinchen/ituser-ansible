@@ -1,0 +1,13 @@
+---
+
+- name: make dir
+  hosts: client
+  tasks:
+
+    - name: mkdir
+      command: mkdir /usr/work/ansible
+      register: result
+
+    - name: print stdout
+      debug:
+        msg: ""

@@ -1,0 +1,15 @@
+[Unit]
+Description=Node_Exporter
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/local/prometheus/node_exporter/node_exporter --collector.textfile.directory=/usr/local/prometheus/textfile_collector
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
+

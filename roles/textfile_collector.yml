@@ -1,0 +1,23 @@
+---
+
+  - name: Textfile Collector Script Deployment
+    hosts: test
+    vars:
+    - user: "prometheus"
+    - group: "prometheus"
+    - textfile_collector: "/usr/local/prometheus/textfile_collector"
+
+    - name: Sync script file
+      copy:
+        src: /etc/ansible/prometheus/storcli.py
+        dest: "{{textfile_collector}}"
+        owner: "{{user}}"
+        group: "{{group}}"
+
+    - name: Add crontab task
+      cron:
+        name: "start Storcli script every 30 minute"
+        minute: "*/30"
+        job : "python {{textfile_collector}}/storcli.py > {{textfile_collector}}/storcli.prom"
+
+

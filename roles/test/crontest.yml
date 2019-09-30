@@ -1,0 +1,11 @@
+---
+
+- name: crontab test
+  hosts: test 
+  tasks:
+
+    - name: crontab test
+      cron:
+        name: "test"
+        minute: "*/1"
+        job : "echo test"

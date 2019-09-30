@@ -1,0 +1,70 @@
+---
+
+  - name: Node Exporter Deployment
+    hosts: test
+    vars:
+    - user: "prometheus"
+    - group: "prometheus"
+    - node_exporter_package: "node_exporter-0.17.0.linux-amd64"
+
+    tasks:
+    - name: Create group
+      group:
+        name: "{{group}}"
+        state: present
+
+    - name: Add user
+      user:
+        name: "{{user}}"
+        group: "{{group}}"
+        shell: /sbin/nologin
+
+    - name: Create directory for prometheus
+      file:
+        path: /usr/local/prometheus
+        owner: "{{user}}"
+        group: "{{group}}"
+        mode: 750
+        state: directory
+
+   - name: Create directory for textfile_collector
+      file:
+        path: /usr/local/prometheus/textfile_collector
+        owner: "{{user}}"
+        group: "{{group}}"
+        mode: 750
+        state: directory
+
+    - name: Unpack node_exporter package
+      unarchive:
+        src: /etc/ansible/prometheus/{{node_exporter_package}}.tar.gz
+        dest: /usr/local/prometheus
+        owner: "{{user}}"
+        group: "{{group}}"
+        creates: /usr/local/prometheus/node_exporter    #当node_exporter目录已存在时，不执行任何操作
+
+    - name: Rename the path
+      command: mv /usr/local/prometheus/{{node_exporter_package}} /usr/local/prometheus/node_exporter creates=/usr/local/prometheus/node_exporter
+
+    - name: Change owner
+      file:
+        path: /usr/local/prometheus/node_exporter
+        owner: "{{user}}"
+        group: "{{group}}"
+        mode: 750
+
+    - name: Install unit file to systemd
+      copy:
+        src: "{{item.src}}"
+        dest: "{{item.dest}}"
+        owner: "{{user}}"
+        group: "{{group}}"
+      with_items:
+        - {src: "/etc/ansible/prometheus/node_exporter.service", dest: "/usr/lib/systemd/system"}
+
+    - name: Start service node_exporter, if not running
+      systemd: 
+        daemon_reload: yes
+        enabled: yes
+        state: started
+        name: node_exporter.service

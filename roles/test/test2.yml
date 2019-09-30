@@ -1,0 +1,29 @@
+---
+
+  - name: node exporter deployment
+    hosts: test
+    vars:
+    - user: "prometheus"
+    - group: "prometheus"
+    - node_exporter_package: "node_exporter-0.17.0.linux-amd64"
+
+    tasks:
+    - name: Create Group
+      group:
+        name: "{{group}}"
+        state: present
+
+    - name: Add User
+      user:
+        name: "{{user}}"
+        group: "{{group}}"
+        shell: /sbin/nologin
+
+    - name: Create Directory for Prometheus
+      file:
+        path: /usr/local/prometheus
+        owner: "{{user}}"
+        group: "{{group}}"
+        mode: 750
+        state: directory
+

@@ -1,0 +1,35 @@
+---
+
+  - name: storcli Deployment
+    hosts: test
+    vars:
+    - user: "prometheus"
+    - group: "prometheus"
+    - textfile_collector: "/usr/local/prometheus/textfile_collector"
+
+    tasks:
+    - name: Sync strocli package
+      copy:
+        src: /etc/ansible/prometheus/storcli-1.14.12-1.noarch.rpm
+        dest: /usr/local/prometheus
+        owner: "{{user}}"
+        group: "{{group}}"
+
+    - name: Install strocli
+      yum: 
+        name: /usr/local/prometheus/storcli-1.14.12-1.noarch.rpm
+        state: present
+
+    - name: Sync textfile collector script
+      copy:
+        src: /etc/ansible/prometheus/storcli.py
+        dest: "{{textfile_collector}}"
+        owner: "{{user}}"
+        group: "{{group}}"
+
+    - name: Add crontab task
+      cron:
+        name: "start Storcli script every 30 minute"
+        minute: "*/30"
+        job : "python {{textfile_collector}}/storcli.py > {{textfile_collector}}/storcli.prom"
+
