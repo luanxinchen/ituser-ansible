@@ -1,0 +1,10 @@
+---
+- name: shutdown
+#  become: yes
+#  become_method: sudo
+  hosts: shutdown 
+
+  tasks:
+  - command: sudo /sbin/shutdown -h now
+    ignore_errors: yes
+...
