@@ -31,3 +31,13 @@
 > 文件依赖：
 `./prometheus/storcli.py`
 `./prometheus/storcli-1.14.12-1.noarch.rpm`
+
+## 2.shutdown
+
+`ansible-playbook ./shutdown/shutdown.yml`
+
+说明：批量关机playbook
+
+`./shutdown/ituser.sh`
+
+说明：一键添加关机用到的ituser用户，并增加/sbin/shutdown执行权限
