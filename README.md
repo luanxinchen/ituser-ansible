@@ -24,9 +24,9 @@
 说明：部署storcli和探针脚本并添加到crontab启动
 
 * storcli安装路径`/opt/MegaRAID/storcli/storcli64`
-* 脚本默认工作路径`/usr/local/prometheus/textfile_collector`
+* script默认工作路径`/usr/local/prometheus/textfile_collector`
 * crontab刷新时间`30`分钟
-* 指针文件`/usr/local/prometheus/textfile_collector/storcli.prom`
+* metric文件`/usr/local/prometheus/textfile_collector/storcli.prom`
 
 > 文件依赖：
 `./prometheus/storcli.py`
