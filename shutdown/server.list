@@ -1,0 +1,15 @@
+=======================+===============+===============+===============+=========
+Time                   |IP addr        |Hostname       |Ownername      |Status 
+=======================+===============+===============+===============+=========
+2019-10-18 14:48:18	172.16.2.16	transwarp
+2019-10-18 14:52:54	172.16.2.16	transwarp	xinchen.luan	OK
+2019-10-18 14:57:59	172.16.2.17	transwarp	test	failed
+2019-10-18 14:59:12	172.16.2.1	trans	1224646	failed
+2019-10-18 15:00:39	172.16.2.1	TEST TEST	1224646	failed
+2019-10-18 15:01:00	172.16.2.1	localhost.localhost	1224646	failed
+2019-10-18 15:01:26	172.16.2.108	localhost.localhost	1224646	failed
+2019-10-18 15:04:18	172.16.2.108	localhost.localhost	xinchen.luan	failed
+2019-10-18 15:04:44	172.16.2.108	localhost	xinchen.luan	failed
+2019-10-18 15:21:00	172.16.2.108	localhost.localdomain	xinchen.luan	failed
+2019-10-18 15:24:25		DESKTOP-HMJ0V43.localdomain	zongyao.zhou	Failed
+2019-10-18 15:28:37	172.16.2.31	localhost	zongyao.zhou	OK
