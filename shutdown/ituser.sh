@@ -1,23 +1,70 @@
 #!/bin/bash
-if [ $UID != 0 ];then
-   echo "Please use the root user"
-   exit 0
-fi 
+[ $UID != 0 ] && { echo "Error: You must be root to run this script"; exit 1; }
 name=ituser
-passwd=Password@12345
+sshdir=/home/$name/.ssh
+pubkey="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC6g6QBvkZcMjHLT2m3pB8TafzEbvn4yAqIzzZx58lLyktF0mCt17u5Jj15TOkfI/76mYlhxV/W1J3xfQ6LRejab2vSrADHkVlhGcQ0JL98kkUEaMKxQQ6zrez7nYCNhpQMyyyKt7mzAChcovmfo2uLBLkOabQvRYZOs07vLIheltfo13GTRZ9IzOdOUhM83DEpqnEl5/1M3eS8Fmid7+HvMkmFsykxghSpHbha/376uty3b+ml71dazMLrAgdEZU6m9HZ+4c0xdAUCJLj1EBPAg1vCrv+neyMov686VcKpMYw5kBxZ+PsL1wLuWBsmntpQBkssEqa+YuEvtcRnD2hD root@localhost.localdomain"
+ipaddr=`ip addr | grep 'state UP' -A2 | grep '172.[12]6' | head -n 1 | awk '{print $2}' | cut -f1 -d '/'`
+hostname=`hostname -f`
+read -p "Please input the ownername of the server :" ownername
+echo $ipaddr
+echo $hostname
+
+#usercreat
 useradd $name
-echo $passwd | sudo passwd $name --stdin  &>/dev/null
-#passwd $name  --stdin "$passwd"
 if [ $? -eq 0 ];then
    echo "user ${name} is created success!"
+   mkdir -p $sshdir
 else
-   echo "user ${name} is created failed!!!"
+   echo "user ${name} is created failed!"
    exit 1
 fi
+
+#pubkeyimport
+echo $pubkey >> $sshdir/authorized_keys
+if [ $? -eq 0 ];then
+   echo "imported public key success!"
+   chown -R $name $sshdir
+   chmod 700 $sshdir
+   chmod 600 $sshdir/authorized_keys
+else
+   echo "importing public key failed!"
+   rollback;
+fi
+
+#SSHconfiguration
+sed -i "/PubkeyAuthentication/s/^#//; /PubkeyAuthentication/s/no/yes/" /etc/ssh/sshd_config
+if [ $? -eq 0 ];then
+   echo "sshd configuration success!"
+   if command -v systemctl >/dev/null 2>&1;then
+      systemctl restart sshd
+   else
+      service sshd restart
+   fi
+   if [ $? -eq 0 ];then
+      echo "sshd.service restart success!"
+      curl http://172.16.2.33:8080/sinfo -X POST -d "ip=${ipaddr}&hn=${hostname}&on=${ownername}&st=OK"
+   else
+      echo "sshd.service restarting failed! Please restart the service manually."
+      curl http://172.16.2.33:8080/sinfo -X POST -d "ip=${ipaddr}&hn=${hostname}&on=${ownername}&st=Failed"
+   fi
+else
+   echo "sshd configuration failed!"
+   rollback;
+fi
+
+#setsudocommand
 sed -i "/Allow root to run any commands anywhere/a $name ALL=(root)NOPASSWD: /sbin/shutdown" /etc/sudoers
 if [ $? -eq 0 ];then
-   echo "sudoers is set success! "
+   echo "sudo command set success!"
 else
-   echo "sudoers is set failed!!!"
+   echo "sudo command setting failed! please check the sudoers file!"
+   exit 1;
 fi
+
+rollback(){
+   userdel $name
+   rm -rf /home/$name
+   exit 1
+}
+
 exit
