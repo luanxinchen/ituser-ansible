@@ -5,21 +5,19 @@ sshdir=/home/$name/.ssh
 pubkey="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC6g6QBvkZcMjHLT2m3pB8TafzEbvn4yAqIzzZx58lLyktF0mCt17u5Jj15TOkfI/76mYlhxV/W1J3xfQ6LRejab2vSrADHkVlhGcQ0JL98kkUEaMKxQQ6zrez7nYCNhpQMyyyKt7mzAChcovmfo2uLBLkOabQvRYZOs07vLIheltfo13GTRZ9IzOdOUhM83DEpqnEl5/1M3eS8Fmid7+HvMkmFsykxghSpHbha/376uty3b+ml71dazMLrAgdEZU6m9HZ+4c0xdAUCJLj1EBPAg1vCrv+neyMov686VcKpMYw5kBxZ+PsL1wLuWBsmntpQBkssEqa+YuEvtcRnD2hD root@localhost.localdomain"
 ipaddr=`ip addr | grep 'state UP' -A2 | grep '172.[12]6' | head -n 1 | awk '{print $2}' | cut -f1 -d '/'`
 hostname=`hostname -f`
-read -p "Please input the ownername of the server :" ownername
-echo $ipaddr
-echo $hostname
+read -p "Please input the name of the server owner :" ownername
 
-#usercreat
+#user creat
 useradd $name
 if [ $? -eq 0 ];then
    echo "user ${name} is created success!"
    mkdir -p $sshdir
 else
-   echo "user ${name} is created failed!"
+   echo "user ${name} is creating failed!"
    exit 1
 fi
 
-#pubkeyimport
+#pubkey import
 echo $pubkey >> $sshdir/authorized_keys
 if [ $? -eq 0 ];then
    echo "imported public key success!"
@@ -42,17 +40,17 @@ if [ $? -eq 0 ];then
    fi
    if [ $? -eq 0 ];then
       echo "sshd.service restart success!"
-      curl http://172.16.2.33:8080/sinfo -X POST -d "ip=${ipaddr}&hn=${hostname}&on=${ownername}&st=OK"
+      st=OK
    else
       echo "sshd.service restarting failed! Please restart the service manually."
-      curl http://172.16.2.33:8080/sinfo -X POST -d "ip=${ipaddr}&hn=${hostname}&on=${ownername}&st=Failed"
+      st=Failed
    fi
 else
    echo "sshd configuration failed!"
    rollback;
 fi
 
-#setsudocommand
+#set sudocommand
 sed -i "/Allow root to run any commands anywhere/a $name ALL=(root)NOPASSWD: /sbin/shutdown" /etc/sudoers
 if [ $? -eq 0 ];then
    echo "sudo command set success!"
@@ -66,5 +64,8 @@ rollback(){
    rm -rf /home/$name
    exit 1
 }
+
+#status return
+curl http://172.16.2.33:8080/sinfo -X POST -d "ip=${ipaddr}&hn=${hostname}&on=${ownername}&st=${st}"
 
 exit
