@@ -2,7 +2,9 @@ import web
 import datetime
 
 urls = (
-    '/', 'index','/sinfo','serverinfo'
+    '/', 'index',
+    '/sinfo','serverinfo',
+    '/ituser.sh','ituser',
 )
 
 class index:
@@ -10,18 +12,24 @@ class index:
         return "Hello, world!"
 
 class serverinfo:
-
     def POST(self):
         input=web.input()
-	dt=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        dt=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         f=open('server.list','a+')
         f.write(str(dt+'\t'+input.ip+'\t'+input.hn+'\t'+input.on+'\t'+input.st+'\n'))
         f.close()
 
     def GET(self):
-	f=open('server.list','r')
-	data=f.read()
-	f.close()
+        f=open('server.list','r')
+        data=f.read()
+        f.close()
+        return data
+
+class ituser:
+    def GET(self):
+        f=open('ituser.sh','r')
+        data=f.read()
+        f.close()
         return data
 
 if __name__ == "__main__":
