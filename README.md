@@ -1,6 +1,6 @@
 # Ansible-Playbook
 
-## 1.Prometheus
+## Prometheus
 
 ### node_exporter
 
@@ -32,7 +32,7 @@
 `./prometheus/storcli.py`
 `./prometheus/storcli-1.14.12-1.noarch.rpm`
 
-## 2.shutdown
+## shutdown
 
 `ansible-playbook ./shutdown/shutdown.yml`
 
@@ -40,4 +40,15 @@
 
 `./shutdown/ituser.sh`
 
-说明：一键添加关机用到的ituser用户，并增加/sbin/shutdown执行权限
+说明：一键添加ituser用户并导入公钥，添加/sbin/shutdown执行权限
+
+* 公钥路径 `/home/ituser/.sshd/authorized_keys`
+* 开启公钥登陆 PubkeyAuthentication in `/etc/ssh/sshd_config`
+* 配置sudo命令 `/etc/sudoers`
+
+
+`./shutdown/code.py`
+
+说明：收集脚本执行反馈并提供脚本GET的简单Web服务，基于web.py实现
+
+> 环境依赖：`python2.7` `web.py`
