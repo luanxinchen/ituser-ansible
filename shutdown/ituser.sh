@@ -40,10 +40,10 @@ if [ $? -eq 0 ];then
    fi
    if [ $? -eq 0 ];then
       echo "sshd.service restart success!"
-      st=OK
+      sshst=OK
    else
       echo "sshd.service restarting failed! Please restart the service manually."
-      st=Failed
+      sshst=Failed
    fi
 else
    echo "sshd configuration failed!"
@@ -54,9 +54,10 @@ fi
 sed -i "/Allow root to run any commands anywhere/a $name ALL=(root)NOPASSWD: /sbin/shutdown" /etc/sudoers
 if [ $? -eq 0 ];then
    echo "sudo command set success!"
+   sudost=OK
 else
    echo "sudo command setting failed! please check the sudoers file!"
-   exit 1;
+   sudost=Failed
 fi
 
 rollback(){
@@ -66,6 +67,6 @@ rollback(){
 }
 
 #status return
-curl http://172.16.2.33:8080/sinfo -X POST -d "ip=${ipaddr}&hn=${hostname}&on=${ownername}&st=${st}"
+curl http://172.16.2.33:8080/sinfo -X POST -d "ip=${ipaddr}&hn=${hostname}&on=${ownername}&sshst=${sshst}&sudost=${sudost}"
 
 exit
