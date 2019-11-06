@@ -1,0 +1,29 @@
+---
+
+  - name: node exporter deployment
+    hosts: shutdown
+    vars:
+    - user: "ituser"
+    - node_exporter_package: "node_exporter-0.17.0.linux-amd64"
+
+    tasks:
+    - name: Create directory for prometheus
+      file:
+        path: /home/{{user}}/prometheus
+        state: directory
+
+    - name: Unpack node_exporter package
+      unarchive:
+        src: /etc/ansible/prometheus/{{node_exporter_package}}.tar.gz
+        dest: /home/{{user}}/prometheus
+        creates: /home/{{user}}/prometheus/node_exporter    #当node_exporter目录已存在时，不执行任何操作
+
+    - name: Rename the path
+      command: mv /home/{{user}}/prometheus/{{node_exporter_package}} /home/{{user}}/prometheus/node_exporter creates=/home/{{user}}/prometheus/node_exporter
+
+    - name: Add node_exporter crontab task
+      cron:
+        name: "start node_exporter every 1 minute"
+        minute: "*/1"
+        job : "if [ -z \"`ps -ef | grep node_exporter | grep -v grep`\" ];then nohup /home/ituser/prometheus/node_exporter/node_exporter --collector.textfile.directory=\"/home/ituser/prometheus/textfile_collector\" > /dev/null 2>&1 & fi"
+
