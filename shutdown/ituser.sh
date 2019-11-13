@@ -5,7 +5,7 @@ sshdir=/home/$name/.ssh
 pubkey="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC6g6QBvkZcMjHLT2m3pB8TafzEbvn4yAqIzzZx58lLyktF0mCt17u5Jj15TOkfI/76mYlhxV/W1J3xfQ6LRejab2vSrADHkVlhGcQ0JL98kkUEaMKxQQ6zrez7nYCNhpQMyyyKt7mzAChcovmfo2uLBLkOabQvRYZOs07vLIheltfo13GTRZ9IzOdOUhM83DEpqnEl5/1M3eS8Fmid7+HvMkmFsykxghSpHbha/376uty3b+ml71dazMLrAgdEZU6m9HZ+4c0xdAUCJLj1EBPAg1vCrv+neyMov686VcKpMYw5kBxZ+PsL1wLuWBsmntpQBkssEqa+YuEvtcRnD2hD root@localhost.localdomain"
 ipaddr=`ip addr | grep 'state UP' -A2 | grep '172.[12]6' | head -n 1 | awk '{print $2}' | cut -f1 -d '/'`
 hostname=`hostname -f`
-read -p "Please input the name of the server owner :" ownername
+read -p "Please input the name of the server owner (use email prefix, such as zongyao.zhou) :" ownername
 
 #user creat
 useradd $name
