@@ -52,3 +52,9 @@
 说明：收集脚本执行反馈并提供脚本GET的简单Web服务，基于web.py实现
 
 > 环境依赖：`python2.7` `web.py`
+
+# Ansible命令收集
+
+```
+ansible-playbook ping.yml -i ../hosts --extra-vars "host=test" #指定playbook的host inventory为‘test’
+```
